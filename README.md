@@ -26,9 +26,9 @@ A tela da webcam mostra o que está sendo detectado em tempo real (a ponta dos c
 
 É possível ajustar os valores de detecção dos canetões através dos trackbars que aparecem na parte superior da tela.
 
-Para limpar a tela, basta pressionar a tecla `c`.
+Para limpar a tela, basta segurar a tecla `c`.
 
-Para sair do programa, basta pressionar a tecla `q`.
+Para sair do programa, basta segurar a tecla `q`.
 
 ## Autores
 

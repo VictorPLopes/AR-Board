@@ -10,6 +10,7 @@ import configparser
 def emtpy_callback(_):
     pass
 
+
 # Função para calcular a média das coordenadas dos keypoints
 def coord_detect(keypoints):
     x = 0
@@ -51,19 +52,21 @@ cv2.createTrackbar("MAX_POINTS", "Lousa", 10, 150, emtpy_callback)
 cv2.setTrackbarPos("MAX_POINTS", "Lousa", 60)
 
 
+# Carrega as configurações do arquivo config.ini
 config = configparser.ConfigParser()
 try:
-    config.read('config.ini')
-    cv2.setTrackbarPos("LH_RED", "Lousa", config['Settings'].getint('LH_RED'))
-    cv2.setTrackbarPos("LS_RED", "Lousa", config['Settings'].getint('LS_RED'))
-    cv2.setTrackbarPos("UH_RED", "Lousa", config['Settings'].getint('UH_RED'))
-    cv2.setTrackbarPos("LH_GREEN", "Lousa", config['Settings'].getint('LH_GREEN'))
-    cv2.setTrackbarPos("LS_GREEN", "Lousa", config['Settings'].getint('LS_GREEN'))
-    cv2.setTrackbarPos("UH_GREEN", "Lousa", config['Settings'].getint('UH_GREEN'))
-    cv2.setTrackbarPos("EROSION", "Lousa", config['Settings'].getint('EROSION'))
-    cv2.setTrackbarPos("MAX_POINTS", "Lousa", config['Settings'].getint('MAX_POINTS'))
-finally:
-     print("Config Carregado")
+    config.read("config.ini")
+    cv2.setTrackbarPos("LH_RED", "Lousa", config["Settings"].getint("LH_RED"))
+    cv2.setTrackbarPos("LS_RED", "Lousa", config["Settings"].getint("LS_RED"))
+    cv2.setTrackbarPos("UH_RED", "Lousa", config["Settings"].getint("UH_RED"))
+    cv2.setTrackbarPos("LH_GREEN", "Lousa", config["Settings"].getint("LH_GREEN"))
+    cv2.setTrackbarPos("LS_GREEN", "Lousa", config["Settings"].getint("LS_GREEN"))
+    cv2.setTrackbarPos("UH_GREEN", "Lousa", config["Settings"].getint("UH_GREEN"))
+    cv2.setTrackbarPos("EROSION", "Lousa", config["Settings"].getint("EROSION"))
+    cv2.setTrackbarPos("MAX_POINTS", "Lousa", config["Settings"].getint("MAX_POINTS"))
+    print("Config Carregado")
+except:
+    print("Config não encontrado")
 
 
 # Parâmetros para o detector de blobs
@@ -80,7 +83,8 @@ detector = cv2.SimpleBlobDetector_create(params)
 red_draw = []
 green_draw = []
 
-while True:
+while True:    
+    # Lê o frame da câmera
     ret, frame = cap.read()
     if not ret:
         break
@@ -101,7 +105,9 @@ while True:
     red_mask = cv2.inRange(hsv, lower_red, upper_red)
 
     # Detecta keypoints na máscara da cor vermelha
-    red_res = cv2.erode(cv2.bitwise_and(frame, frame, mask=red_mask), None, iterations=erosion)
+    red_res = cv2.erode(
+        cv2.bitwise_and(frame, frame, mask=red_mask), None, iterations=erosion
+    )
     inverted_red_mask = cv2.bitwise_not(red_mask)
     red_keypoints = detector.detect(inverted_red_mask)
 
@@ -114,7 +120,9 @@ while True:
     green_mask = cv2.inRange(hsv, lower_green, upper_green)
 
     # Detecta keypoints na máscara da cor verde
-    res_green = cv2.erode(cv2.bitwise_and(frame, frame, mask=green_mask), None, iterations=erosion)
+    res_green = cv2.erode(
+        cv2.bitwise_and(frame, frame, mask=green_mask), None, iterations=erosion
+    )
     inverted_green_mask = cv2.bitwise_not(green_mask)
     green_keypoints = detector.detect(inverted_green_mask)
 
@@ -143,28 +151,36 @@ while True:
     combined_res = cv2.bitwise_or(red_res, res_green)
     cv2.imshow("Lousa", cv2.flip(combined_res, 1))
 
+
+    # Lê a tecla pressionada
+    key = cv2.waitKey(1)
+    
     # Limpa as listas de coordenadas ao pressionar a tecla "c"
-    if cv2.waitKey(1) & 0xFF == ord("c"):
+    if key == ord("c"):
         red_draw.clear()
         green_draw.clear()
-    
+
     # Sai do loop ao pressionar a tecla "q"
-    if cv2.waitKey(1) & 0xFF == ord("q"):
+    elif key == ord("q") or cv2.getWindowProperty('Lousa',cv2.WND_PROP_VISIBLE) < 1:
         break
 
-config['Settings'] = {
-    'LH_RED': cv2.getTrackbarPos("LH_RED", "Lousa"),
-    'LS_RED': cv2.getTrackbarPos("LS_RED", "Lousa"),
-    'UH_RED': cv2.getTrackbarPos("UH_RED", "Lousa"),
-    'LH_GREEN': cv2.getTrackbarPos("LH_GREEN", "Lousa"),
-    'LS_GREEN': cv2.getTrackbarPos("LS_GREEN", "Lousa"),
-    'UH_GREEN': cv2.getTrackbarPos("UH_GREEN", "Lousa"),
-    'EROSION': cv2.getTrackbarPos("EROSION", "Lousa"),
-    'MAX_POINTS': cv2.getTrackbarPos("MAX_POINTS", "Lousa")
+# Salva as configurações no arquivo config.ini
+config["Settings"] = {
+    "LH_RED": cv2.getTrackbarPos("LH_RED", "Lousa"),
+    "LS_RED": cv2.getTrackbarPos("LS_RED", "Lousa"),
+    "UH_RED": cv2.getTrackbarPos("UH_RED", "Lousa"),
+    "LH_GREEN": cv2.getTrackbarPos("LH_GREEN", "Lousa"),
+    "LS_GREEN": cv2.getTrackbarPos("LS_GREEN", "Lousa"),
+    "UH_GREEN": cv2.getTrackbarPos("UH_GREEN", "Lousa"),
+    "EROSION": cv2.getTrackbarPos("EROSION", "Lousa"),
+    "MAX_POINTS": cv2.getTrackbarPos("MAX_POINTS", "Lousa"),
 }
-
-with open('config.ini', 'w') as configfile:
-    config.write(configfile)
+try:
+    with open("config.ini", "w") as configfile:
+        config.write(configfile)
+    print("Config Salvo")
+except:
+    print("Erro ao salvar config")
 
 cap.release()
 cv2.destroyAllWindows()
