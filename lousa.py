@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import configparser
 
 # https://docs.opencv.org/4.x/df/d9d/tutorial_py_colorspaces.html
 # https://www.bluetin.io/opencv/opencv-color-detection-filtering-python/
@@ -48,6 +49,21 @@ cv2.createTrackbar("EROSION", "Lousa", 0, 151, emtpy_callback)
 cv2.setTrackbarPos("EROSION", "Lousa", 4)
 cv2.createTrackbar("MAX_POINTS", "Lousa", 10, 150, emtpy_callback)
 cv2.setTrackbarPos("MAX_POINTS", "Lousa", 60)
+
+
+config = configparser.ConfigParser()
+try:
+    config.read('config.ini')
+    cv2.setTrackbarPos("LH_RED", "Lousa", config['Settings'].getint('LH_RED'))
+    cv2.setTrackbarPos("LS_RED", "Lousa", config['Settings'].getint('LS_RED'))
+    cv2.setTrackbarPos("UH_RED", "Lousa", config['Settings'].getint('UH_RED'))
+    cv2.setTrackbarPos("LH_GREEN", "Lousa", config['Settings'].getint('LH_GREEN'))
+    cv2.setTrackbarPos("LS_GREEN", "Lousa", config['Settings'].getint('LS_GREEN'))
+    cv2.setTrackbarPos("UH_GREEN", "Lousa", config['Settings'].getint('UH_GREEN'))
+    cv2.setTrackbarPos("EROSION", "Lousa", config['Settings'].getint('EROSION'))
+    cv2.setTrackbarPos("MAX_POINTS", "Lousa", config['Settings'].getint('MAX_POINTS'))
+finally:
+     print("Config Carregado")
 
 
 # Parâmetros para o detector de blobs
@@ -135,6 +151,20 @@ while True:
     # Sai do loop ao pressionar a tecla "q"
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
+
+config['Settings'] = {
+    'LH_RED': cv2.getTrackbarPos("LH_RED", "Lousa"),
+    'LS_RED': cv2.getTrackbarPos("LS_RED", "Lousa"),
+    'UH_RED': cv2.getTrackbarPos("UH_RED", "Lousa"),
+    'LH_GREEN': cv2.getTrackbarPos("LH_GREEN", "Lousa"),
+    'LS_GREEN': cv2.getTrackbarPos("LS_GREEN", "Lousa"),
+    'UH_GREEN': cv2.getTrackbarPos("UH_GREEN", "Lousa"),
+    'EROSION': cv2.getTrackbarPos("EROSION", "Lousa"),
+    'MAX_POINTS': cv2.getTrackbarPos("MAX_POINTS", "Lousa")
+}
+
+with open('config.ini', 'w') as configfile:
+    config.write(configfile)
 
 cap.release()
 cv2.destroyAllWindows()
