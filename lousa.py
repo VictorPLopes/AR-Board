@@ -7,6 +7,7 @@ import configparser
 # https://docs.opencv.org/4.x/d1/db7/tutorial_py_histogram_begins.html
 
 
+# Função vazia para os trackbars
 def emtpy_callback(_):
     pass
 
@@ -30,44 +31,46 @@ def coord_detect(keypoints):
 cap = cv2.VideoCapture(0)
 cv2.namedWindow("Lousa")
 
+# Dicionário com as configurações dos trackbars (facilita na na leitura dos valores e possibilita recuperá-los com a janela fechada)
+settings = { # Valores padrão
+    "LH_RED": 169,
+    "LS_RED": 108,
+    "UH_RED": 0,
+    "LH_GREEN": 20,
+    "LS_GREEN": 45,
+    "UH_GREEN": 100,
+    "EROSION": 4,
+    "MAX_POINTS": 60
+}
+
 # Cria os trackbars para a cor vermelha
 cv2.createTrackbar("LH_RED", "Lousa", 0, 179, emtpy_callback)
 cv2.createTrackbar("LS_RED", "Lousa", 0, 255, emtpy_callback)
 cv2.createTrackbar("UH_RED", "Lousa", 179, 179, emtpy_callback)
-cv2.setTrackbarPos("LH_RED", "Lousa", 169)
-cv2.setTrackbarPos("LS_RED", "Lousa", 108)
 
 # Cria os trackbars para a cor verde
 cv2.createTrackbar("LH_GREEN", "Lousa", 0, 179, emtpy_callback)
 cv2.createTrackbar("LS_GREEN", "Lousa", 0, 255, emtpy_callback)
 cv2.createTrackbar("UH_GREEN", "Lousa", 179, 179, emtpy_callback)
-cv2.setTrackbarPos("LH_GREEN", "Lousa", 20)
-cv2.setTrackbarPos("LS_GREEN", "Lousa", 45)
-cv2.setTrackbarPos("UH_GREEN", "Lousa", 100)
 
 # Cria os trackbars para a erosão e o número máximo de pontos
 cv2.createTrackbar("EROSION", "Lousa", 0, 151, emtpy_callback)
-cv2.setTrackbarPos("EROSION", "Lousa", 4)
 cv2.createTrackbar("MAX_POINTS", "Lousa", 10, 150, emtpy_callback)
-cv2.setTrackbarPos("MAX_POINTS", "Lousa", 60)
 
 
 # Carrega as configurações do arquivo config.ini
 config = configparser.ConfigParser()
 try:
     config.read("config.ini")
-    cv2.setTrackbarPos("LH_RED", "Lousa", config["Settings"].getint("LH_RED"))
-    cv2.setTrackbarPos("LS_RED", "Lousa", config["Settings"].getint("LS_RED"))
-    cv2.setTrackbarPos("UH_RED", "Lousa", config["Settings"].getint("UH_RED"))
-    cv2.setTrackbarPos("LH_GREEN", "Lousa", config["Settings"].getint("LH_GREEN"))
-    cv2.setTrackbarPos("LS_GREEN", "Lousa", config["Settings"].getint("LS_GREEN"))
-    cv2.setTrackbarPos("UH_GREEN", "Lousa", config["Settings"].getint("UH_GREEN"))
-    cv2.setTrackbarPos("EROSION", "Lousa", config["Settings"].getint("EROSION"))
-    cv2.setTrackbarPos("MAX_POINTS", "Lousa", config["Settings"].getint("MAX_POINTS"))
+    for key in settings:
+        settings[key] = config["Settings"].getint(key)
     print("Config Carregado")
 except:
     print("Config não encontrado")
 
+# Define os valores iniciais dos trackbars
+for key in settings:
+    cv2.setTrackbarPos(key, "Lousa", settings[key])
 
 # Parâmetros para o detector de blobs
 params = cv2.SimpleBlobDetector_Params()
@@ -89,39 +92,31 @@ while True:
     if not ret:
         break
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-    # Pega o valor da erosão
-    erosion = cv2.getTrackbarPos("EROSION", "Lousa")
-
-    # Pega o valor máximo de pontos
-    max_points = cv2.getTrackbarPos("MAX_POINTS", "Lousa")
+    
+    # Pega as configurações dos trackbars
+    for key in settings:
+        settings[key] = cv2.getTrackbarPos(key, "Lousa")
 
     # Filtro para a cor vermelha
-    lh_red = cv2.getTrackbarPos("LH_RED", "Lousa")
-    ls_red = cv2.getTrackbarPos("LS_RED", "Lousa")
-    uh_red = cv2.getTrackbarPos("UH_RED", "Lousa")
-    lower_red = np.array([lh_red, ls_red, 0])
-    upper_red = np.array([uh_red, 255, 255])
+    lower_red = np.array([settings["LH_RED"], settings["LS_RED"], 0])
+    upper_red = np.array([settings["UH_RED"], 255, 255])
     red_mask = cv2.inRange(hsv, lower_red, upper_red)
 
     # Detecta keypoints na máscara da cor vermelha
     red_res = cv2.erode(
-        cv2.bitwise_and(frame, frame, mask=red_mask), None, iterations=erosion
+        cv2.bitwise_and(frame, frame, mask=red_mask), None, iterations=settings["EROSION"]
     )
     inverted_red_mask = cv2.bitwise_not(red_mask)
     red_keypoints = detector.detect(inverted_red_mask)
 
     # Filtro para a cor verde
-    lh_green = cv2.getTrackbarPos("LH_GREEN", "Lousa")
-    ls_green = cv2.getTrackbarPos("LS_GREEN", "Lousa")
-    uh_green = cv2.getTrackbarPos("UH_GREEN", "Lousa")
-    lower_green = np.array([lh_green, ls_green, 0])
-    upper_green = np.array([uh_green, 255, 255])
+    lower_green = np.array([settings["LH_GREEN"], settings["LS_GREEN"], 0])
+    upper_green = np.array([settings["UH_GREEN"], 255, 255])
     green_mask = cv2.inRange(hsv, lower_green, upper_green)
 
     # Detecta keypoints na máscara da cor verde
     res_green = cv2.erode(
-        cv2.bitwise_and(frame, frame, mask=green_mask), None, iterations=erosion
+        cv2.bitwise_and(frame, frame, mask=green_mask), None, iterations=settings["EROSION"]
     )
     inverted_green_mask = cv2.bitwise_not(green_mask)
     green_keypoints = detector.detect(inverted_green_mask)
@@ -131,7 +126,7 @@ while True:
     if coord is not None:
         red_draw.append(coord)
     # Se houver mais de 30 coordenadas, remove a primeira
-    if len(red_draw) > max_points:
+    if len(red_draw) > settings["MAX_POINTS"]:
         red_draw.pop(0)
 
     # Adiciona a média das coordenadas dos red_keypoints
@@ -139,7 +134,7 @@ while True:
     if coord is not None:
         green_draw.append(coord)
     # Se houver mais de 30 coordenadas, remove a primeira
-    if len(green_draw) > max_points:
+    if len(green_draw) > settings["MAX_POINTS"]:
         green_draw.pop(0)
 
     # Desenha círculos nas coordenadas da lista
@@ -166,14 +161,14 @@ while True:
 
 # Salva as configurações no arquivo config.ini
 config["Settings"] = {
-    "LH_RED": cv2.getTrackbarPos("LH_RED", "Lousa"),
-    "LS_RED": cv2.getTrackbarPos("LS_RED", "Lousa"),
-    "UH_RED": cv2.getTrackbarPos("UH_RED", "Lousa"),
-    "LH_GREEN": cv2.getTrackbarPos("LH_GREEN", "Lousa"),
-    "LS_GREEN": cv2.getTrackbarPos("LS_GREEN", "Lousa"),
-    "UH_GREEN": cv2.getTrackbarPos("UH_GREEN", "Lousa"),
-    "EROSION": cv2.getTrackbarPos("EROSION", "Lousa"),
-    "MAX_POINTS": cv2.getTrackbarPos("MAX_POINTS", "Lousa"),
+    "LH_RED": settings["LH_RED"],
+    "LS_RED": settings["LS_RED"],
+    "UH_RED": settings["UH_RED"],
+    "LH_GREEN": settings["LH_GREEN"],
+    "LS_GREEN": settings["LS_GREEN"],
+    "UH_GREEN": settings["UH_GREEN"],
+    "EROSION": settings["EROSION"],
+    "MAX_POINTS": settings["MAX_POINTS"]
 }
 try:
     with open("config.ini", "w") as configfile:
