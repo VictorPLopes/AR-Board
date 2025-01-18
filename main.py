@@ -122,18 +122,16 @@ while True:
             # Desenha com cinza
             if last_pencil is not None and np.linalg.norm(np.array(coords) - np.array(last_pencil)) < 50:
                 cv2.line(board, last_pencil, coords, (128, 128, 128), 5)
-                last_pencil = coords
             else:
                 cv2.circle(board, coords, 5, (128, 128, 128), -1)
-                last_pencil = coords
+            last_pencil = coords
         elif label == 'marker':
             # Desenha com azul
             if last_marker is not None and np.linalg.norm(np.array(coords) - np.array(last_marker)) < 50:
                 cv2.line(board, last_marker, coords, (255, 0, 0), 5)
-                last_marker = coords
             else:
                 cv2.circle(board, coords, 5, (255, 0, 0), -1)
-                last_marker = coords
+            last_marker = coords
         elif label == 'eraser':
             # Apaga área detectada
             cv2.rectangle(board, (x1, y1), (x2, y2), (0, 0, 0), -1)
