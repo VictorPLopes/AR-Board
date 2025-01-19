@@ -15,7 +15,7 @@ print(f"Using device: {device}")
 
 
 # Carregar o modelo YOLO
-model = torch.hub.load('ultralytics/yolov5', 'custom', path='models/lousa-virtual-v8.pt', device=device)
+model = torch.hub.load('ultralytics/yolov5', 'custom', path='models/lousa-virtual-v10.pt', device=device)
 
 # Nome e dimensões da janela
 WINDOW_NAME = "AR Board"
