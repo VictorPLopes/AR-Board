@@ -9,7 +9,7 @@ from board_utils.common_utils import *
 device = get_device()
 print(f"Using device: {device}")
 
-model = load_yolo_model('models/lousa-virtual-v12.pt', device)
+model = load_yolo_model('models/ar-board-v12.pt', device)
 WINDOW_NAME = "AR Board"
 
 # Inicializa configurações e trackbars
