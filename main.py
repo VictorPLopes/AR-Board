@@ -9,7 +9,7 @@ from board_utils.common_utils import *
 device = get_device()
 print(f"Using device: {device}")
 
-model = load_yolo_model('models/lousa-virtual-v10.pt', device)
+model = load_yolo_model('models/lousa-virtual-v12.pt', device)
 WINDOW_NAME = "AR Board"
 
 # Inicializa configurações e trackbars
@@ -44,13 +44,13 @@ while True:
         coords = ((x1 + x2) // 2, (y1 + y2) // 2)
         label = results.names[int(cls)]
         if label == 'pencil':
-            if last_pencil and np.linalg.norm(np.array(coords) - np.array(last_pencil)) < 50:
+            if last_pencil and np.linalg.norm(np.array(coords) - np.array(last_pencil)) < 100:
                 cv2.line(board, last_pencil, coords, (128, 128, 128), 5)
             else:
                 cv2.circle(board, coords, 5, (128, 128, 128), -1)
             last_pencil = coords
         elif label == 'marker':
-            if last_marker and np.linalg.norm(np.array(coords) - np.array(last_marker)) < 50:
+            if last_marker and np.linalg.norm(np.array(coords) - np.array(last_marker)) < 100:
                 cv2.line(board, last_marker, coords, (255, 0, 0), 5)
             else:
                 cv2.circle(board, coords, 5, (255, 0, 0), -1)
@@ -61,7 +61,7 @@ while True:
     combined_frame = cv2.addWeighted(frame, 0.5, board, 0.5, 0)
     cv2.imshow(WINDOW_NAME, combined_frame)
 
-    if cv2.waitKey(1) & 0xFF == 27:  # ESC
+    if cv2.waitKey(1) & 0xFF == 27 or cv2.getWindowProperty(WINDOW_NAME, cv2.WND_PROP_VISIBLE) < 1:  # ESC
         break
 
 save_config("config.ini", settings)
