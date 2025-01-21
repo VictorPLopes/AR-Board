@@ -13,7 +13,7 @@ The YOLOv5 neural network was trained using a [custom dataset](https://universe.
 The training parameters used to train the model on a machine with an Nvidia GeForce RTX 4070 GPU were:
 
 ```py
-python train.py --img 640 --batch -1 --epochs 200 --data dataset.yaml --weights yolov5m.pt --cache
+python train.py --img 640 --batch -1 --epochs 75 --data dataset.yaml --weights yolov5m.pt --cache
 ```
 
 A notebook that can be used to train the model in the cloud using a dataset from Roboflow is provided by the platform itself on Google Colab, [here](https://colab.research.google.com/drive/1gDZ2xcTOgR39tGGs-EZ6i3RTs16wmzZQ).
