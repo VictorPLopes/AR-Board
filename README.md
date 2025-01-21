@@ -12,7 +12,7 @@ A rede neural YOLOv5 foi treinada utilizando um [dataset próprio](https://unive
 
 Os parâmetros de treinamento utilizados para treinar o modelo em uma máquina com GPU Nvidia GeForce RTX 4070 foram:
 
-```py
+```bash
 python train.py --img 640 --batch -1 --epochs 75 --data dataset.yaml --weights yolov5m.pt --cache
 ```
 

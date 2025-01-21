@@ -12,7 +12,7 @@ The YOLOv5 neural network was trained using a [custom dataset](https://universe.
 
 The training parameters used to train the model on a machine with an Nvidia GeForce RTX 4070 GPU were:
 
-```py
+```bash
 python train.py --img 640 --batch -1 --epochs 75 --data dataset.yaml --weights yolov5m.pt --cache
 ```
 
