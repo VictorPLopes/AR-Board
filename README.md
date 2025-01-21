@@ -4,7 +4,7 @@
 
 ## Descrição
 
-Este projeto é uma lousa virtual de realidade aumentada, onde o usuário pode desenhar na tela utilizando a webcam. O projeto foi desenvolvido utilizando principalmente o algoritmo de detecção de objetos em tempo real [YOLOv5](https://github.com/ultralytics/yolov5) e as bibliotecas [OpenCV](https://opencv.org/releases/) e [PyTorch](https://pytorch.org/) para [Python 3.12](https://www.python.org/).
+Este projeto é uma lousa virtual de realidade aumentada, onde o usuário pode desenhar na tela utilizando a webcam. O projeto foi desenvolvido utilizando principalmente o algoritmo de detecção de objetos em tempo real [YOLOv5](https://github.com/ultralytics/yolov5) e as bibliotecas [OpenCV](https://opencv.org/releases/) e [PyTorch](https://pytorch.org/) para [Python 3.12](https://www.python.org/). Este trabalho foi desenvolvido para a disciplina de Processamento Digital de Imagens do curso de Engenharia da Computação do IFSP de Piracicaba.
 
 ![Lousa Virtual](assets/video.gif)
 

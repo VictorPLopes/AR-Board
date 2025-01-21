@@ -4,7 +4,7 @@
 
 ## Description
 
-This project is a virtual augmented reality board where the user can draw on the screen using the webcam. The project was developed primarily using the real-time object detection algorithm [YOLOv5](https://github.com/ultralytics/yolov5) and the libraries [OpenCV](https://opencv.org/releases/) and [PyTorch](https://pytorch.org/) for [Python 3.12](https://www.python.org/).
+This project is a virtual augmented reality board where the user can draw on the screen using the webcam. The project was developed primarily using the real-time object detection algorithm [YOLOv5](https://github.com/ultralytics/yolov5) and the libraries [OpenCV](https://opencv.org/releases/) and [PyTorch](https://pytorch.org/) for [Python 3.12](https://www.python.org/). This work was created for the Digital Image Processing course in the Computer Engineering program at IFSP Piracicaba.
 
 ![Virtual Board](assets/video.gif)
 
